@@ -1,0 +1,577 @@
+Sr No	Problem statement
+1	Write a shell script to Display Good Morning, Evening, Afternoon and Night based on time
+2	Write a shell script to Find factorial of a given number
+3	Write a shell script to Check whether given number is prime or not
+4	Write a shell script to count the number of vowels in a text file vowel.txt to be created by user.
+5	Write a shell program to create a directory “DISC” in the current directory, and then transfer all the files having filename starting with “d” from the current directory to the directory “DISC”.
+6	 Write a shell script which deletes all odd numbered lines in a text file and display the altered output in a separate file.
+7	write a shell script to read a text file, count the special /other symbols in it (#,$,&.? Etc)
+8	Write a shell script to display the smallest file name(in respect of the string length) among the list of files available in the current directory.
+9	Write a shell script to write the initials of any name given as input
+10	"Write a shell script which produces a report from the output of ls –l in the following form:
+Only regular files, directories and symbolic links are printed.
+The file type and permissions are removed
+A / character is appended to each directory name and the word DIR is printed at the beginning of the line
+"
+11	"Write a shell script which produces a report from the output of ls –l in the following form:
+Only regular files, directories and symbolic links are printed.
+The file type and permissions are removed                                                                    A @ character is appended to each symbolic link name and work LINK is printed at the beginning of the line
+"
+12	write a shell script that print the smallest digit of a given number
+13	Shell program to count  Vowels, blank spaces, characters, number of line and symbols
+14	Write a shell script to display filename having maximum size in home directory.
+15	Write a shell script to display filename having minimum size in home directory.
+16	Write a shell program to print fibonacci series.
+17	"Write a shell script to translate all the characters to lower case in
+a given text file."
+18	Write a shell program to search given string into another string.
+19	Write a shell script to enter the name and three subject marks of a student and calculate the total and percentagea) First class if percent >-60 b) second class if percentage >=45 and < 60 c) Third class if percentage <45 and > =40 else fail
+20	Write a shell program to deminstrate use of various commnad line arguments
+21	Write a shell script using function for following:1)average of given numbers 2) Max from given numbers and 3) min from given numbers
+22	Write a shell program to display all the files under current directory which starts with  vowel and ends with number
+
+ans :---
+
+chmod +x greet.sh
+
+1. 
+
+#!/bin/bash
+
+current_hour=$(date +"%H")
+
+if [ $current_hour -ge 5 -a $current_hour -lt 12 ]; then
+    echo "Good Morning!"
+elif [ $current_hour -ge 12 -a $current_hour -lt 17 ]; then
+    echo "Good Afternoon!"
+elif [ $current_hour -ge 17 -a $current_hour -lt 21 ]; then
+    echo "Good Evening!"
+else
+    echo "Good Night!"
+fi
+
+
+2.
+
+#!/bin/bash
+
+echo "Enter a number:"
+read num
+
+factorial=1
+
+if [ $num -lt 0 ]; then
+    echo "Factorial is not defined for negative numbers."
+elif [ $num -eq 0 ]; then
+    echo "Factorial of $num is 1"
+else
+    for ((i=1; i<=num; i++)); do
+        factorial=$((factorial * i))
+    done
+    echo "Factorial of $num is $factorial"
+fi
+
+
+3.
+
+#!/bin/bash
+
+echo "Enter a number:"
+read num
+
+is_prime=true
+
+if [ $num -eq 1 ]; then
+    is_prime=false
+elif [ $num -gt 1 ]; then
+    for ((i=2; i*i<=num; i++)); do
+        if [ $((num % i)) -eq 0 ]; then
+            is_prime=false
+            break
+        fi
+    done
+fi
+
+if $is_prime; then
+    echo "$num is a prime number"
+else
+    echo "$num is not a prime number"
+fi
+
+4. 
+
+#!/bin/bash
+
+echo "Enter some text. Press Ctrl+D to save and exit."
+
+# Create the text file
+cat > vowel.txt
+
+# Check if the file exists
+if [ -f "vowel.txt" ]; then
+    # Count the number of vowels in the file
+    vowel_count=$(tr -cd 'aeiouAEIOU' < vowel.txt | wc -c)
+    
+    echo "Number of vowels in vowel.txt: $vowel_count"
+else
+    echo "File creation failed."
+fi
+
+
+5.
+
+
+#!/bin/bash
+
+# Create DISC directory if it doesn't exist
+mkdir -p DISC
+
+# Move files starting with 'd' to DISC directory
+mv d* DISC/
+
+echo "Files starting with 'd' moved to DISC directory."
+
+
+6.
+
+#!/bin/bash
+
+echo "Enter the name of the text file:"
+read input_file
+
+# Check if the file exists
+if [ -f "$input_file" ]; then
+    # Create a new file for the altered output
+    output_file="${input_file}_altered"
+    
+    # Use awk to delete odd-numbered lines and save the result to the output file
+    awk 'NR % 2 == 0' "$input_file" > "$output_file"
+    
+    echo "Odd-numbered lines deleted. Altered output saved in $output_file."
+else
+    echo "File not found."
+fi
+
+
+7.
+
+#!/bin/bash
+
+echo "Enter the name of the text file:"
+read input_file
+
+# Check if the file exists
+if [ -f "$input_file" ]; then
+    # Use grep to count the occurrences of special symbols
+    special_symbol_count=$(grep -o '[^a-zA-Z0-9 ]' "$input_file" | wc -l)
+    
+    echo "Number of special symbols in $input_file: $special_symbol_count"
+else
+    echo "File not found."
+fi
+
+
+8.
+
+#!/bin/bash
+
+# Get a list of files in the current directory
+file_list=$(ls)
+
+# Initialize variables to store the smallest file name and its length
+smallest_file=""
+smallest_length=9999  # A large initial value
+
+# Iterate through each file in the current directory
+for file in $file_list; do
+    # Check if the length of the current file name is smaller than the current smallest length
+    if [ ${#file} -lt $smallest_length ]; then
+        smallest_file=$file
+        smallest_length=${#file}
+    fi
+done
+
+# Display the smallest file name
+echo "Smallest file name in terms of string length: $smallest_file"
+
+
+9.
+
+#!/bin/bash
+
+echo "Enter a name:"
+read name
+
+# Use awk to extract the initials from the name
+initials=$(echo "$name" | awk '{for(i=1;i<=NF;i++) printf toupper(substr($i,1,1));}')
+
+echo "Initials of the name $name: $initials"
+
+10.
+
+#!/bin/bash
+
+echo "Report from ls -l:"
+echo "-------------------"
+
+# Use ls -l to get the file details, then process the output
+ls -l | while read -r permissions links owner group size date time file; do
+    # Check if it's a regular file, directory, or symbolic link
+    if [ -f "$file" ]; then
+        type="File"
+    elif [ -d "$file" ]; then
+        type="DIR"
+        file="${file}/"  # Append / to directory name
+    elif [ -L "$file" ]; then
+        type="Link"
+    else
+        continue  # Skip other file types
+    fi
+
+    # Remove file type and permissions, and display the report
+    echo "Type: $type, Name: $file"
+done
+
+
+11.
+
+#!/bin/bash
+
+echo "Report from ls -l:"
+echo "-------------------"
+
+# Use ls -l to get the file details, then process the output
+ls -l | while read -r permissions links owner group size date time file; do
+    # Check if it's a regular file, directory, or symbolic link
+    if [ -f "$file" ]; then
+        type="File"
+    elif [ -d "$file" ]; then
+        type="DIR"
+    elif [ -L "$file" ]; then
+        type="LINK"
+        file="${file}@"
+    else
+        continue  # Skip other file types
+    fi
+
+    # Remove file type and permissions, and display the report
+    echo "Type: $type, Name: $file"
+done
+
+
+12.
+
+#!/bin/bash
+
+echo "Enter a number:"
+read number
+
+# Initialize the smallest_digit with the first digit of the number
+smallest_digit=${number:0:1}
+
+# Iterate through each digit in the number
+for ((i=0; i<${#number}; i++)); do
+    digit=${number:$i:1}
+    
+    # Compare the current digit with the smallest_digit
+    if [ "$digit" -lt "$smallest_digit" ]; then
+        smallest_digit=$digit
+    fi
+done
+
+echo "The smallest digit in the number $number is: $smallest_digit"
+
+
+13.
+
+#!/bin/bash
+
+echo "Enter text. Press Ctrl+D to end the input:"
+text=$(cat)
+
+# Count variables
+vowels=0
+blanks=0
+characters=0
+lines=0
+symbols=0
+
+# Iterate through each character in the input text
+for ((i=0; i<${#text}; i++)); do
+    char="${text:$i:1}"
+
+    # Check for vowels
+    case $char in
+        [aeiouAEIOU])
+            ((vowels++))
+            ;;
+    esac
+
+    # Check for blank spaces
+    if [[ $char == " " ]]; then
+        ((blanks++))
+    fi
+
+    # Count all characters
+    ((characters++))
+
+    # Check for symbols (non-alphabetic, non-numeric, non-space)
+    if [[ ! $char =~ [a-zA-Z0-9\ ] ]]; then
+        ((symbols++))
+    fi
+
+    # Check for new lines
+    if [[ $char == $'\n' ]]; then
+        ((lines++))
+    fi
+done
+
+echo "Number of vowels: $vowels"
+echo "Number of blank spaces: $blanks"
+echo "Number of characters: $characters"
+echo "Number of lines: $lines"
+echo "Number of symbols: $symbols"
+
+
+14.
+
+#!/bin/bash
+
+# Use du to get disk usage information for files in the home directory
+du_output=$(du -h "$HOME"/* 2>/dev/null)
+
+# Check if du command was successful
+if [ $? -eq 0 ]; then
+    # Use awk to extract file sizes and filenames
+    max_size_file=$(echo "$du_output" | awk '$1 ~ /^[0-9]+[KMGT]?$/{if ($1 > max) {max = $1; max_file = $2}} END{print max_file}')
+
+    # Display the filename with the maximum size
+    if [ -n "$max_size_file" ]; then
+        echo "File with maximum size in home directory: $max_size_file"
+    else
+        echo "No files found in the home directory."
+    fi
+else
+    echo "Error running du command. Check your permissions."
+fi
+
+
+15.
+
+#!/bin/bash
+
+# Use du to get disk usage information for files in the home directory
+du_output=$(du -h "$HOME"/* 2>/dev/null)
+
+# Check if du command was successful
+if [ $? -eq 0 ]; then
+    # Use awk to extract file sizes and filenames
+    min_size_file=$(echo "$du_output" | awk '$1 ~ /^[0-9]+[KMGT]?$/{if (min == 0 || $1 < min) {min = $1; min_file = $2}} END{print min_file}')
+
+    # Display the filename with the minimum size
+    if [ -n "$min_size_file" ]; then
+        echo "File with minimum size in home directory: $min_size_file"
+    else
+        echo "No files found in the home directory."
+    fi
+else
+    echo "Error running du command. Check your permissions."
+fi
+
+
+16.
+
+#!/bin/bash
+
+echo "Enter the number of terms in the Fibonacci series:"
+read n
+
+# Function to generate Fibonacci series
+fibonacci() {
+    a=0
+    b=1
+
+    for ((i=0; i<n; i++)); do
+        echo -n "$a "
+
+        temp=$((a + b))
+        a=$b
+        b=$temp
+    done
+}
+
+# Check if the input is a positive integer
+if [[ $n =~ ^[1-9][0-9]*$ ]]; then
+    echo "Fibonacci series with $n terms:"
+    fibonacci
+else
+    echo "Please enter a valid positive integer."
+fi
+
+
+17.
+
+#!/bin/bash
+
+echo "Enter the name of the text file:"
+read input_file
+
+# Check if the file exists
+if [ -f "$input_file" ]; then
+    # Create a new file for the translated output
+    output_file="${input_file}_lowercase"
+
+    # Use tr to translate characters to lowercase and save the result to the output file
+    tr '[:upper:]' '[:lower:]' < "$input_file" > "$output_file"
+
+    echo "Translation to lowercase complete. Translated text saved in $output_file."
+else
+    echo "File not found."
+fi
+
+
+18.
+
+#!/bin/bash
+
+echo "Enter the main string:"
+read main_string
+
+echo "Enter the string to search:"
+read search_string
+
+# Check if the search string is present in the main string
+if [[ $main_string == *"$search_string"* ]]; then
+    echo "The search string is present in the main string."
+else
+    echo "The search string is not present in the main string."
+fi
+
+
+19.
+
+#!/bin/bash
+
+echo "Enter student name:"
+read name
+
+echo "Enter marks for three subjects:"
+read -p "Subject 1: " subject1
+read -p "Subject 2: " subject2
+read -p "Subject 3: " subject3
+
+# Calculate total and percentage
+total=$((subject1 + subject2 + subject3))
+percentage=$(echo "scale=2; ($total / 300) * 100" | bc)
+
+echo "Total marks: $total"
+echo "Percentage: $percentage"
+
+# Determine class based on percentage
+if (( $(echo "$percentage >= 60" | bc -l) )); then
+    echo "Class: First Class"
+elif (( $(echo "$percentage >= 45 && $percentage < 60" | bc -l) )); then
+    echo "Class: Second Class"
+elif (( $(echo "$percentage < 45 && $percentage >= 40" | bc -l) )); then
+    echo "Class: Third Class"
+else
+    echo "Result: Fail"
+fi
+
+
+20.
+
+#!/bin/bash
+
+echo "Script Name: $0"
+echo "Number of arguments: $#"
+
+echo "All arguments: \$@ -> $@"
+echo "All arguments: \$* -> $*"
+
+echo "First argument: \$1 -> $1"
+echo "Second argument: \$2 -> $2"
+echo "Third argument: \$3 -> $3"
+
+# Check if the script was run with at least one argument
+if [ $# -gt 0 ]; then
+    echo "Arguments using loop:"
+    for arg in "$@"; do
+        echo "$arg"
+    done
+else
+    echo "No arguments provided."
+fi
+
+./command_line_args.sh arg1 arg2 arg3
+
+
+21.
+
+#!/bin/bash
+
+# Function to calculate the average of given numbers
+calculate_average() {
+    local sum=0
+    local count=0
+
+    for num in "$@"; do
+        sum=$((sum + num))
+        ((count++))
+    done
+
+    if [ $count -gt 0 ]; then
+        average=$(echo "scale=2; $sum / $count" | bc)
+        echo "Average: $average"
+    else
+        echo "No numbers provided for average calculation."
+    fi
+}
+
+# Function to find the maximum among given numbers
+find_maximum() {
+    local max=$1
+
+    for num in "$@"; do
+        if [ $num -gt $max ]; then
+            max=$num
+        fi
+    done
+
+    echo "Maximum: $max"
+}
+
+# Function to find the minimum among given numbers
+find_minimum() {
+    local min=$1
+
+    for num in "$@"; do
+        if [ $num -lt $min ]; then
+            min=$num
+        fi
+    done
+
+    echo "Minimum: $min"
+}
+
+# Example usage of functions
+numbers=(10 5 8 15 3)
+
+calculate_average "${numbers[@]}"
+find_maximum "${numbers[@]}"
+find_minimum "${numbers[@]}"
+
+
+22.
+
+#!/bin/bash
+
+echo "Files starting with a vowel and ending with a number:"
+shopt -s nullglob  # Handle case when no matching files are found
+
+for file in [aeiouAEIOU]*[0-9]; do
+    if [ -f "$file" ]; then
+        echo "$file"
+    fi
+done
+
